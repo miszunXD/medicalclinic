@@ -1,5 +1,6 @@
 package com.miszunXD.medicalclinic.controller;
 
+import com.miszunXD.medicalclinic.model.ChangePasswordRequest;
 import com.miszunXD.medicalclinic.model.Patient;
 import com.miszunXD.medicalclinic.service.PatientService;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +33,7 @@ public class PatientController {
     }
 
     @DeleteMapping("/{email}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deletePatient(@PathVariable String email) {
         service.deletePatient(email);
     }
@@ -39,5 +41,11 @@ public class PatientController {
     @PutMapping("/{email}")
     public Patient updatePatientByEmail(@PathVariable String email, @RequestBody Patient patient) {
         return service.updatePatientByEmail(email, patient);
+    }
+
+    @PatchMapping("/{email}/password")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void changePassword(@PathVariable String email, @RequestBody ChangePasswordRequest request) {
+        service.changePassword(email, request);
     }
 }
