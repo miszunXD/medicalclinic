@@ -12,7 +12,7 @@ import java.util.Optional;
 public class PatientRepository {
     private final List<Patient> patients = new ArrayList<>();
 
-    public List<Patient> findAll() {
+    public List<Patient> getPatients() {
         return new ArrayList<>(patients);
     }
 
@@ -21,13 +21,18 @@ public class PatientRepository {
         return patient;
     }
 
-    public void deleteByEmail(String email) {
-        patients.removeIf(patient -> Objects.equals(patient.getEmail(), email));
+    public void delete(Patient patient) {
+        patients.remove(patient);
     }
 
     public Optional<Patient> findByEmail(String email) {
         return patients.stream()
                 .filter(patient -> Objects.equals(patient.getEmail(), email))
                 .findFirst();
+    }
+
+    public boolean existsByEmail(String email) {
+        return patients.stream()
+                .anyMatch(patient -> Objects.equals(patient.getEmail(), email));
     }
 }

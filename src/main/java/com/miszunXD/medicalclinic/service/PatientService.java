@@ -1,10 +1,9 @@
 package com.miszunXD.medicalclinic.service;
 
-import com.miszunXD.medicalclinic.exception.IllegalOperationException;
-import com.miszunXD.medicalclinic.exception.OldPasswordDoesNotMatchException;
+import com.miszunXD.medicalclinic.exception.IdCardNumberChangeNotAllowedException;
 import com.miszunXD.medicalclinic.exception.PatientAlreadyExistsException;
 import com.miszunXD.medicalclinic.exception.PatientNotFoundException;
-import com.miszunXD.medicalclinic.model.ChangePasswordRequest;
+import com.miszunXD.medicalclinic.model.ChangePasswordCommand;
 import com.miszunXD.medicalclinic.model.Patient;
 import com.miszunXD.medicalclinic.repository.PatientRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,46 +17,43 @@ import java.util.Objects;
 public class PatientService {
     private final PatientRepository repository;
 
-    public List<Patient> findAll() {
-        return repository.findAll();
+    public List<Patient> getPatients() {
+        return repository.getPatients();
     }
 
     public Patient getPatientByEmail(String email) {
         return repository.findByEmail(email)
-                .orElseThrow(() -> new PatientNotFoundException("Nie znaleziono pacjenta z adresem email: " + email));
+                .orElseThrow(() -> new PatientNotFoundException("Patient with email " + email + " not found!"));
     }
 
     public Patient addPatient(Patient patient) {
-        if (repository.findByEmail(patient.getEmail()).isPresent()) {
-            throw new PatientAlreadyExistsException("Pacjent z adresem email: " + patient.getEmail()
-                    + " już istnieje w bazie!");
+        if (repository.existsByEmail(patient.getEmail())) {
+            throw new PatientAlreadyExistsException("Patient with given email: " + patient.getEmail()
+                    + " already exists!");
         }
         return repository.save(patient);
     }
 
     public void deletePatient(String email) {
-        getPatientByEmail(email);
-        repository.deleteByEmail(email);
+        Patient patient = getPatientByEmail(email);
+        repository.delete(patient);
     }
 
     public Patient updatePatientByEmail(String email, Patient updated) {
         Patient existing = getPatientByEmail(email);
-
         if (!Objects.equals(existing.getIdCardNo(), updated.getIdCardNo())) {
-            throw new IllegalOperationException("Nie można zmieniać numeru dowodu osobistego pacjenta!");
+            throw new IdCardNumberChangeNotAllowedException("Not allowed to change IDCard number!");
         }
-        existing.setFirstName(updated.getFirstName());
-        existing.setLastName(updated.getLastName());
-        existing.setPhoneNumber(updated.getPhoneNumber());
-        existing.setBirthday(updated.getBirthday());
+        if (!Objects.equals(email, updated.getEmail()) && repository.existsByEmail(updated.getEmail())) {
+            throw new PatientAlreadyExistsException("Patient with given email: " + updated.getEmail()
+                    + " already exists!");
+        }
+        existing.update(updated);
         return existing;
     }
 
-    public void changePassword(String email, ChangePasswordRequest request) {
+    public void changePassword(String email, ChangePasswordCommand request) {
         Patient patient = getPatientByEmail(email);
-        if (!Objects.equals(patient.getPassword(), request.getOldPassword())) {
-            throw new OldPasswordDoesNotMatchException("Podane stare hasło jest nieprawidłowe!");
-        }
         patient.setPassword(request.getNewPassword());
     }
 }
