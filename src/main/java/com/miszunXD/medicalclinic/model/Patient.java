@@ -27,4 +27,8 @@ public class Patient {
         this.phoneNumber = updated.getPhoneNumber();
         this.birthday = updated.getBirthday();
     }
+
+    public void changePassword(String newPassword) {
+        this.password = newPassword;
+    }
 }

@@ -52,8 +52,8 @@ public class PatientService {
         return existing;
     }
 
-    public void changePassword(String email, ChangePasswordCommand request) {
+    public void changePassword(String email, ChangePasswordCommand command) {
         Patient patient = getPatientByEmail(email);
-        patient.setPassword(request.getNewPassword());
+        patient.changePassword(command.getNewPassword());
     }
 }
