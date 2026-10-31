@@ -29,7 +29,7 @@ public class UserController {
         return userService.addUser(user);
     }
 
-    @DeleteMapping
+    @DeleteMapping("/{username}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteUser(@PathVariable String username) {
         userService.deleteUser(username);
