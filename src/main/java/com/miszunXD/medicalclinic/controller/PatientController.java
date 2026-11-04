@@ -1,12 +1,12 @@
 package com.miszunXD.medicalclinic.controller;
 
+import com.miszunXD.medicalclinic.dto.CreatePatientCommand;
+import com.miszunXD.medicalclinic.dto.PatientDto;
 import com.miszunXD.medicalclinic.model.ChangePasswordCommand;
-import com.miszunXD.medicalclinic.model.Patient;
 import com.miszunXD.medicalclinic.service.PatientService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
@@ -16,19 +16,19 @@ public class PatientController {
     private final PatientService patientService;
 
     @GetMapping
-    public List<Patient> getPatients() {
+    public List<PatientDto> getPatients() {
         return patientService.getPatients();
     }
 
     @GetMapping("/{email}")
-    public Patient getPatientByEmail(@PathVariable String email) {
+    public PatientDto getPatientByEmail(@PathVariable String email) {
         return patientService.getPatientByEmail(email);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Patient addPatient(@RequestBody Patient patient) {
-        return patientService.addPatient(patient);
+    public PatientDto addPatient(@RequestBody CreatePatientCommand command) {
+        return patientService.addPatient(command);
     }
 
     @DeleteMapping("/{email}")
@@ -38,7 +38,7 @@ public class PatientController {
     }
 
     @PutMapping("/{email}")
-    public Patient updatePatientByEmail(@PathVariable String email, @RequestBody Patient patient) {
+    public PatientDto updatePatientByEmail(@PathVariable String email, @RequestBody PatientDto patient) {
         return patientService.updatePatientByEmail(email, patient);
     }
 

@@ -1,14 +1,16 @@
 package com.miszunXD.medicalclinic.service;
 
+import com.miszunXD.medicalclinic.dto.CreatePatientCommand;
+import com.miszunXD.medicalclinic.dto.PatientDto;
 import com.miszunXD.medicalclinic.exception.IdCardNumberChangeNotAllowedException;
 import com.miszunXD.medicalclinic.exception.PatientAlreadyExistsException;
 import com.miszunXD.medicalclinic.exception.PatientNotFoundException;
+import com.miszunXD.medicalclinic.mapper.PatientMapper;
 import com.miszunXD.medicalclinic.model.ChangePasswordCommand;
 import com.miszunXD.medicalclinic.model.Patient;
 import com.miszunXD.medicalclinic.repository.PatientRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Objects;
 
@@ -16,44 +18,50 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class PatientService {
     private final PatientRepository repository;
+    private final PatientMapper patientMapper;
 
-    public List<Patient> getPatients() {
-        return repository.getPatients();
+    public List<PatientDto> getPatients() {
+        return patientMapper.toDtoToList(repository.getPatients());
     }
 
-    public Patient getPatientByEmail(String email) {
-        return repository.findByEmail(email)
-                .orElseThrow(() -> new PatientNotFoundException("Patient with email " + email + " not found!"));
+    public PatientDto getPatientByEmail(String email) {
+        return patientMapper.toDto(findPatientByEmail(email));
     }
 
-    public Patient addPatient(Patient patient) {
-        if (repository.existsByEmail(patient.getEmail())) {
-            throw new PatientAlreadyExistsException("Patient with given email: " + patient.getEmail()
+    public PatientDto addPatient(CreatePatientCommand command) {
+        if (repository.existsByEmail(command.email())) {
+            throw new PatientAlreadyExistsException("Patient with given email: " + command.email()
                     + " already exists!");
         }
-        return repository.save(patient);
+        Patient saved = repository.save(patientMapper.toEntity(command));
+        return patientMapper.toDto(saved);
     }
 
     public void deletePatient(String email) {
-        Patient patient = getPatientByEmail(email);
+        Patient patient = findPatientByEmail(email);
         repository.delete(patient);
     }
 
-    public Patient updatePatientByEmail(String email, Patient updated) {
-        Patient existing = getPatientByEmail(email);
-        if (!Objects.equals(existing.getIdCardNo(), updated.getIdCardNo())) {
+    public PatientDto updatePatientByEmail(String email, PatientDto updated) {
+        Patient existing = findPatientByEmail(email);
+        if (!Objects.equals(existing.getIdCardNo(), updated.idCardNo())) {
             throw new IdCardNumberChangeNotAllowedException("Not allowed to change IDCard number!");
         }
-        if (!Objects.equals(email, updated.getEmail()) && repository.existsByEmail(updated.getEmail())) {
-            throw new PatientAlreadyExistsException("Patient with given email: " + updated.getEmail()
+        if (!Objects.equals(email, updated.email()) && repository.existsByEmail(updated.email())) {
+            throw new PatientAlreadyExistsException("Patient with given email: " + updated.email()
                     + " already exists!");
         }
-        existing.update(updated);
-        return existing;
+        patientMapper.updateFromDto(updated, existing);
+        return patientMapper.toDto(existing);
     }
 
     public void changePassword(String email, ChangePasswordCommand command) {
-        Patient patient = getPatientByEmail(email);
+        Patient patient = findPatientByEmail(email);
         patient.changePassword(command.getNewPassword());
+    }
+
+    private Patient findPatientByEmail(String email) {
+        return repository.findByEmail(email)
+                .orElseThrow(() -> new PatientNotFoundException("Patient with given email: " + email + " not found!"));
     }
 }
