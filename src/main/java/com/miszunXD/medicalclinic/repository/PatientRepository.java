@@ -5,13 +5,14 @@ import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Repository
 public class PatientRepository {
     private final List<Patient> patients = new ArrayList<>();
 
-    public List<Patient> findAll() {
+    public List<Patient> getPatients() {
         return new ArrayList<>(patients);
     }
 
@@ -20,13 +21,18 @@ public class PatientRepository {
         return patient;
     }
 
-    public void deleteByEmail(String email) {
-        patients.removeIf(patient -> patient.getEmail().equals(email));
+    public void delete(Patient patient) {
+        patients.remove(patient);
     }
 
     public Optional<Patient> findByEmail(String email) {
         return patients.stream()
-                .filter(patient -> patient.getEmail().equals(email))
+                .filter(patient -> Objects.equals(patient.getEmail(), email))
                 .findFirst();
+    }
+
+    public boolean existsByEmail(String email) {
+        return patients.stream()
+                .anyMatch(patient -> Objects.equals(patient.getEmail(), email));
     }
 }
