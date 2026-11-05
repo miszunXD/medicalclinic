@@ -17,11 +17,11 @@ import java.util.Objects;
 @Service
 @RequiredArgsConstructor
 public class PatientService {
-    private final PatientRepository repository;
+    private final PatientRepository patientRepository;
     private final PatientMapper patientMapper;
 
     public List<PatientDto> getPatients() {
-        return patientMapper.toDtoToList(repository.getPatients());
+        return patientMapper.toDtoToList(patientRepository.getPatients());
     }
 
     public PatientDto getPatientByEmail(String email) {
@@ -29,17 +29,17 @@ public class PatientService {
     }
 
     public PatientDto addPatient(CreatePatientCommand command) {
-        if (repository.existsByEmail(command.email())) {
+        if (patientRepository.existsByEmail(command.email())) {
             throw new PatientAlreadyExistsException("Patient with given email: " + command.email()
                     + " already exists!");
         }
-        Patient saved = repository.save(patientMapper.toEntity(command));
+        Patient saved = patientRepository.save(patientMapper.toEntity(command));
         return patientMapper.toDto(saved);
     }
 
     public void deletePatient(String email) {
         Patient patient = findPatientByEmail(email);
-        repository.delete(patient);
+        patientRepository.delete(patient);
     }
 
     public PatientDto updatePatientByEmail(String email, PatientDto updated) {
@@ -47,7 +47,7 @@ public class PatientService {
         if (!Objects.equals(existing.getIdCardNo(), updated.idCardNo())) {
             throw new IdCardNumberChangeNotAllowedException("Not allowed to change IDCard number!");
         }
-        if (!Objects.equals(email, updated.email()) && repository.existsByEmail(updated.email())) {
+        if (!Objects.equals(email, updated.email()) && patientRepository.existsByEmail(updated.email())) {
             throw new PatientAlreadyExistsException("Patient with given email: " + updated.email()
                     + " already exists!");
         }
@@ -61,7 +61,7 @@ public class PatientService {
     }
 
     private Patient findPatientByEmail(String email) {
-        return repository.findByEmail(email)
+        return patientRepository.findByEmail(email)
                 .orElseThrow(() -> new PatientNotFoundException("Patient with given email: " + email + " not found!"));
     }
 }
