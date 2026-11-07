@@ -23,21 +23,21 @@ public class PatientService {
     private final PatientMapper patientMapper;
 
     public List<PatientDto> getPatients() {
-        log.info("Getting list of patients...");
+        log.info("Getting List/patients");
         List<PatientDto> result = patientMapper.toDtoToList(patientRepository.getPatients());
         log.info("List of {} patients", result.size());
         return result;
     }
 
     public PatientDto getPatientByEmail(String email) {
-        log.info("Getting patient by email...");
+        log.info("GET patient by email {}", email);
         PatientDto result =  patientMapper.toDto(findPatientByEmail(email));
         log.info("Found patient by email, idCardNo: {}", result.idCardNo());
         return result;
     }
 
     public PatientDto addPatient(CreatePatientCommand command) {
-        log.info("Adding new patient...");
+        log.info("Add new patient: {}", command);
         if (patientRepository.existsByEmail(command.email())) {
             throw new PatientAlreadyExistsException("Patient with given email: " + command.email()
                     + " already exists!");
@@ -48,14 +48,14 @@ public class PatientService {
     }
 
     public void deletePatient(String email) {
-        log.info("Deleting patient by email...");
+        log.info("Delete patient by email: {}", email);
         Patient patient = findPatientByEmail(email);
         patientRepository.delete(patient);
         log.info("Patient deleted from database, idCardNo: {}", patient.getIdCardNo());
     }
 
     public PatientDto updatePatientByEmail(String email, PatientDto updated) {
-        log.info("Updating patient by email...");
+        log.info("Update patient by email: {}, body: {}", email, updated);
         Patient existing = findPatientByEmail(email);
         if (!Objects.equals(existing.getIdCardNo(), updated.idCardNo())) {
             throw new IdCardNumberChangeNotAllowedException("Not allowed to change IDCard number!");
@@ -70,7 +70,7 @@ public class PatientService {
     }
 
     public void changePassword(String email, ChangePasswordCommand command) {
-        log.info("Changing password...");
+        log.info("Change password: {}", email);
         Patient patient = findPatientByEmail(email);
         patient.changePassword(command.getNewPassword());
         log.info("Password changed, idCardNo: {}", patient.getIdCardNo());
