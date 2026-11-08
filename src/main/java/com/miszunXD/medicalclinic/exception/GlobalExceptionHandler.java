@@ -12,7 +12,7 @@ import java.time.Instant;
 public class GlobalExceptionHandler {
     @ExceptionHandler(MedicalClinicException.class)
     public ResponseEntity<ErrorMessage> handle(MedicalClinicException e) {
-        log.info(e.getMessage());
+        log.info("{} ({}): {}", e.getClass().getSimpleName(), e.getHttpStatus().value(), e.getMessage());
         ErrorMessage message = new ErrorMessage(e.getMessage(), e.getHttpStatus().value(), Instant.now());
     return ResponseEntity.status(e.getHttpStatus()).body(message);
     }
