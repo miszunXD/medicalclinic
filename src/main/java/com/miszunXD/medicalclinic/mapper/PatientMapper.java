@@ -15,6 +15,7 @@ public interface PatientMapper {
     List<PatientDto> toDtoToList(List<Patient> patients);
     Patient toEntity(CreatePatientCommand command);
 
+    @Mapping(target = "id", ignore = true)
     @Mapping(target = "idCardNo", ignore = true)
     @Mapping(target = "password", ignore = true)
     void updateFromDto(PatientDto dto, @MappingTarget Patient patient);
