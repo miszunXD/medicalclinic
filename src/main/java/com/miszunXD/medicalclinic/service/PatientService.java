@@ -24,7 +24,7 @@ public class PatientService {
 
     public List<PatientDto> getPatients() {
         log.info("Getting List/patients");
-        List<PatientDto> result = patientMapper.toDtoToList(patientRepository.getPatients());
+        List<PatientDto> result = patientMapper.toDtoToList(patientRepository.findAll());
         log.info("List of {} patients", result.size());
         return result;
     }
