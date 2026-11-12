@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 import java.time.LocalDate;
 
 @Entity
@@ -29,9 +28,15 @@ public class Patient {
     @Column(nullable = false, unique = true)
     private String idCardNo;
 
+    @Column(nullable = false)
     private String firstName;
+
+    @Column(nullable = false)
     private String lastName;
+
+    @Column(nullable = false)
     private String phoneNumber;
+
     private LocalDate birthday;
 
     public void changePassword(String newPassword) {
