@@ -15,7 +15,7 @@ public class UserService {
     private final UserRepository userRepository;
 
     public List<User> getUsers() {
-        return userRepository.getUsers();
+        return userRepository.findAll();
     }
 
     public User addUser(User user) {
@@ -26,7 +26,7 @@ public class UserService {
     }
 
     public User getUserByUsername(String username) {
-        return userRepository.getByUsername(username)
+        return userRepository.findByUsername(username)
                 .orElseThrow(() -> new UserNotFoundException("User with username: " + username
                 + " not found!"));
     }
@@ -42,6 +42,6 @@ public class UserService {
             throw new UserAlreadyExistsException("User with given username already exists!");
         }
         existing.update(updated);
-        return existing;
+        return userRepository.save(existing);
     }
 }
