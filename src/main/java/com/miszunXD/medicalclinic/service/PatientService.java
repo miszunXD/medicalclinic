@@ -65,6 +65,7 @@ public class PatientService {
                     + " already exists!");
         }
         patientMapper.updateFromDto(updated, existing);
+        patientRepository.save(existing);
         log.info("Patient updated, idCardNo: {}", existing.getIdCardNo());
         return patientMapper.toDto(existing);
     }
@@ -73,6 +74,7 @@ public class PatientService {
         log.info("Change password: {}", email);
         Patient patient = findPatientByEmail(email);
         patient.changePassword(command.getNewPassword());
+        patientRepository.save(patient);
         log.info("Password changed, idCardNo: {}", patient.getIdCardNo());
     }
 
