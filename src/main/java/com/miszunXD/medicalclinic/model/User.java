@@ -23,8 +23,4 @@ public class User {
 
     @Column(nullable = false)
     private String password;
-
-    public void update(User updated) {
-        this.username = updated.getUsername();
-    }
 }
