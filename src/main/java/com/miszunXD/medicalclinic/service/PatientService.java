@@ -2,13 +2,13 @@ package com.miszunXD.medicalclinic.service;
 
 import com.miszunXD.medicalclinic.dto.CreatePatientCommand;
 import com.miszunXD.medicalclinic.dto.PatientDto;
-import com.miszunXD.medicalclinic.exception.IdCardNumberChangeNotAllowedException;
-import com.miszunXD.medicalclinic.exception.PatientAlreadyExistsException;
-import com.miszunXD.medicalclinic.exception.PatientNotFoundException;
+import com.miszunXD.medicalclinic.exception.*;
 import com.miszunXD.medicalclinic.mapper.PatientMapper;
 import com.miszunXD.medicalclinic.model.ChangePasswordCommand;
 import com.miszunXD.medicalclinic.model.Patient;
+import com.miszunXD.medicalclinic.model.User;
 import com.miszunXD.medicalclinic.repository.PatientRepository;
+import com.miszunXD.medicalclinic.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -21,6 +21,7 @@ import java.util.Objects;
 public class PatientService {
     private final PatientRepository patientRepository;
     private final PatientMapper patientMapper;
+    private final UserRepository userRepository;
 
     public List<PatientDto> getPatients() {
         log.info("Getting List/patients");
@@ -42,7 +43,15 @@ public class PatientService {
             throw new PatientAlreadyExistsException("Patient with given email: " + command.email()
                     + " already exists!");
         }
-        Patient saved = patientRepository.save(patientMapper.toEntity(command));
+        User user = userRepository.findById(command.userId())
+                .orElseThrow(() -> new UserNotFoundException("User with given id: " + command.userId() + " not found!"));
+        if (patientRepository.existsByUserId(user.getId())) {
+            throw new UserAlreadyAssignedException("User with id: " + user.getId()
+                    + " is already assigned to another patient!");
+        }
+        Patient patient = patientMapper.toEntity(command);
+        patient.setUser(user);
+        Patient saved = patientRepository.save(patient);
         log.info("Added new patient, idCardNo: {}", saved.getIdCardNo());
         return patientMapper.toDto(saved);
     }

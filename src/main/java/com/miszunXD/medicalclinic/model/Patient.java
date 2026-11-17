@@ -39,6 +39,10 @@ public class Patient {
 
     private LocalDate birthday;
 
+    @OneToOne
+    @JoinColumn(name = "user_id", nullable = false, unique = true)
+    private User user;
+
     public void changePassword(String newPassword) {
         this.password = newPassword;
     }

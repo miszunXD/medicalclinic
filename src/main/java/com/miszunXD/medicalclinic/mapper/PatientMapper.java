@@ -11,13 +11,20 @@ import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface PatientMapper {
+
+    @Mapping(source = "user.id", target = "userId")
     PatientDto toDto(Patient patient);
+
     List<PatientDto> toDtoToList(List<Patient> patients);
+
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "user", ignore = true)
     Patient toEntity(CreatePatientCommand command);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "idCardNo", ignore = true)
     @Mapping(target = "password", ignore = true)
+    @Mapping(target = "user", ignore = true)
     void updateFromDto(PatientDto dto, @MappingTarget Patient patient);
 
 }
