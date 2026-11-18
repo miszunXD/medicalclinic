@@ -23,4 +23,8 @@ public class User {
 
     @Column(nullable = false)
     private String password;
+
+    public void update(String username) {
+        this.username = username;
+    }
 }

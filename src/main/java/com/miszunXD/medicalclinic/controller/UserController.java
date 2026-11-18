@@ -1,13 +1,14 @@
 package com.miszunXD.medicalclinic.controller;
 
 import com.miszunXD.medicalclinic.dto.CreateUserCommand;
+import com.miszunXD.medicalclinic.dto.UpdateUserCommand;
 import com.miszunXD.medicalclinic.dto.UserDto;
-import com.miszunXD.medicalclinic.model.User;
 import com.miszunXD.medicalclinic.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @Slf4j
@@ -20,7 +21,7 @@ public class UserController {
     @GetMapping
     public List<UserDto> getUsers() {
         log.info("REQUEST GET /users");
-        List<UserDto> response =  userService.getUsers();
+        List<UserDto> response = userService.getUsers();
         log.info("RESPONSE GET /users | 200 | count={}", response.size());
         return response;
     }
@@ -37,7 +38,7 @@ public class UserController {
     @ResponseStatus(HttpStatus.CREATED)
     public UserDto addUser(@RequestBody CreateUserCommand command) {
         log.info("REQUEST POST /users");
-        UserDto response =  userService.addUser(command);
+        UserDto response = userService.addUser(command);
         log.info("RESPONSE POST /users | 201");
         return response;
     }
@@ -51,9 +52,9 @@ public class UserController {
     }
 
     @PutMapping("/{username}")
-    public UserDto updateUser(@PathVariable String username, @RequestBody UserDto user) {
+    public UserDto updateUser(@PathVariable String username, @RequestBody UpdateUserCommand command) {
         log.info("REQUEST PUT /users/{}", username);
-        UserDto response =  userService.updateUser(username, user);
+        UserDto response = userService.updateUser(username, command);
         log.info("RESPONSE PUT /users/{} | 200", username);
         return response;
     }

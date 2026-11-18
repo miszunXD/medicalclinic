@@ -1,6 +1,7 @@
 package com.miszunXD.medicalclinic.service;
 
 import com.miszunXD.medicalclinic.dto.CreateUserCommand;
+import com.miszunXD.medicalclinic.dto.UpdateUserCommand;
 import com.miszunXD.medicalclinic.dto.UserDto;
 import com.miszunXD.medicalclinic.exception.UserAlreadyExistsException;
 import com.miszunXD.medicalclinic.exception.UserNotFoundException;
@@ -10,6 +11,7 @@ import com.miszunXD.medicalclinic.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 import java.util.Objects;
 
@@ -22,16 +24,14 @@ public class UserService {
 
     public List<UserDto> getUsers() {
         log.info("Getting List/users");
-        List<UserDto> result = userMapper.toDtoList(userRepository.findAll());
+        List<UserDto> result = userMapper.toDtos(userRepository.findAll());
         log.info("List of {} users", result.size());
         return result;
     }
 
     public UserDto addUser(CreateUserCommand command) {
         log.info("Add new user {}", command);
-        if (userRepository.existsByUsername(command.username())) {
-            throw new UserAlreadyExistsException("User with given username already exists!");
-        }
+        validateUsernameIsUnique(command.username());
         User saved = userRepository.save(userMapper.toEntity(command));
         log.info("Added new user, id: {}", saved.getId());
         return userMapper.toDto(saved);
@@ -39,7 +39,7 @@ public class UserService {
 
     public UserDto getUserByUsername(String username) {
         log.info("GET user by username: {}", username);
-        UserDto result =  userMapper.toDto(findByUsername(username));
+        UserDto result = userMapper.toDto(findByUsername(username));
         log.info("Found user by username, id: {}", result.id());
         return result;
     }
@@ -51,21 +51,31 @@ public class UserService {
         log.info("User deleted, id: {}", user.getId());
     }
 
-    public UserDto updateUser(String username, UserDto updated) {
-        log.info("Update user by username: {}, body: {}", username, updated);
+    public UserDto updateUser(String username, UpdateUserCommand command) {
+        log.info("Update user by username: {}, body: {}", username, command);
         User existing = findByUsername(username);
-        if (!Objects.equals(username, updated.username()) && userRepository.existsByUsername(updated.username())) {
-            throw new UserAlreadyExistsException("User with given username already exists!");
-        }
-        userMapper.updateFromDto(updated, existing);
-        userRepository.save(existing);
-        log.info("User updated, id: {}", existing.getId());
-        return userMapper.toDto(existing);
+        validateNewUsernameIsUnique(username, command.username());
+        existing.update(command.username());
+        User saved = userRepository.save(existing);
+        log.info("User updated, id: {}", saved.getId());
+        return userMapper.toDto(saved);
     }
 
     private User findByUsername(String username) {
         return userRepository.findByUsername(username)
                 .orElseThrow(() -> new UserNotFoundException("User with username: " + username
                         + " not found!"));
+    }
+
+    private void validateUsernameIsUnique(String username) {
+        if (userRepository.existsByUsername(username)) {
+            throw new UserAlreadyExistsException("User with given username already exists!");
+        }
+    }
+
+    private void validateNewUsernameIsUnique(String currentUsername, String updatedUsername) {
+        if (!Objects.equals(currentUsername, updatedUsername)) {
+            validateUsernameIsUnique(updatedUsername);
+        }
     }
 }

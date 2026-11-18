@@ -46,4 +46,12 @@ public class Patient {
     public void changePassword(String newPassword) {
         this.password = newPassword;
     }
+
+    public void update(String email, String firstName, String lastName, String phoneNumber, LocalDate birthday) {
+        this.email = email;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.phoneNumber = phoneNumber;
+        this.birthday = birthday;
+    }
 }
