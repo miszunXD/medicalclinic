@@ -2,7 +2,7 @@ package com.miszunXD.medicalclinic.controller;
 
 import com.miszunXD.medicalclinic.dto.CreatePatientCommand;
 import com.miszunXD.medicalclinic.dto.PatientDto;
-import com.miszunXD.medicalclinic.model.ChangePasswordCommand;
+import com.miszunXD.medicalclinic.dto.UpdatePatientCommand;
 import com.miszunXD.medicalclinic.service.PatientService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -52,18 +52,10 @@ public class PatientController {
     }
 
     @PutMapping("/{email}")
-    public PatientDto updatePatientByEmail(@PathVariable String email, @RequestBody PatientDto patient) {
+    public PatientDto updatePatientByEmail(@PathVariable String email, @RequestBody UpdatePatientCommand command) {
         log.info("REQUEST PUT /patients/{}", email);
-        PatientDto response = patientService.updatePatientByEmail(email, patient);
+        PatientDto response = patientService.updatePatientByEmail(email, command);
         log.info("RESPONSE PUT /patients/{} | 200", email);
         return response;
-    }
-
-    @PatchMapping("/{email}/password")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void changePassword(@PathVariable String email, @RequestBody ChangePasswordCommand command) {
-        log.info("REQUEST PATCH /patients/{}/password", email);
-        patientService.changePassword(email, command);
-        log.info("RESPONSE PATCH /patients/{}/password | 204", email);
     }
 }

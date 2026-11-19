@@ -20,12 +20,6 @@ public class Patient {
     private Long id;
 
     @Column(nullable = false, unique = true)
-    private String email;
-
-    @Column(nullable = false)
-    private String password;
-
-    @Column(nullable = false, unique = true)
     private String idCardNo;
 
     @Column(nullable = false)
@@ -39,7 +33,14 @@ public class Patient {
 
     private LocalDate birthday;
 
-    public void changePassword(String newPassword) {
-        this.password = newPassword;
+    @OneToOne
+    @JoinColumn(name = "user_id", nullable = false, unique = true)
+    private User user;
+
+    public void update(String firstName, String lastName, String phoneNumber, LocalDate birthday) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.phoneNumber = phoneNumber;
+        this.birthday = birthday;
     }
 }

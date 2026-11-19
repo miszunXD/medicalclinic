@@ -3,5 +3,5 @@ package com.miszunXD.medicalclinic.dto;
 import java.time.LocalDate;
 
 public record PatientDto(String email, String idCardNo, String firstName, String lastName,
-                         String phoneNumber, LocalDate birthday) {
+                         String phoneNumber, LocalDate birthday, Long userId) {
 }
