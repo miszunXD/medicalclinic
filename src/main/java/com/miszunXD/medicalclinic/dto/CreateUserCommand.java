@@ -1,10 +1,11 @@
 package com.miszunXD.medicalclinic.dto;
 
-public record CreateUserCommand(String username, String password) {
+public record CreateUserCommand(String email, String username, String password) {
     @Override
     public String toString() {
         return "CreateUserCommand{" +
-                "username='" + username + '\'' +
+                "email='" + email + '\'' +
+                ", username='" + username + '\'' +
                 '}';
     }
 }

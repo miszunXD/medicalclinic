@@ -6,6 +6,7 @@ import com.miszunXD.medicalclinic.dto.UserDto;
 import com.miszunXD.medicalclinic.exception.UserAlreadyExistsException;
 import com.miszunXD.medicalclinic.exception.UserNotFoundException;
 import com.miszunXD.medicalclinic.mapper.UserMapper;
+import com.miszunXD.medicalclinic.model.ChangePasswordCommand;
 import com.miszunXD.medicalclinic.model.User;
 import com.miszunXD.medicalclinic.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +33,7 @@ public class UserService {
     public UserDto addUser(CreateUserCommand command) {
         log.info("Add new user {}", command);
         validateUsernameIsUnique(command.username());
+        validateEmailIsUnique(command.email());
         User saved = userRepository.save(userMapper.toEntity(command));
         log.info("Added new user, id: {}", saved.getId());
         return userMapper.toDto(saved);
@@ -55,10 +57,19 @@ public class UserService {
         log.info("Update user by username: {}, body: {}", username, command);
         User existing = findByUsername(username);
         validateNewUsernameIsUnique(username, command.username());
-        existing.update(command.username());
+        validateNewEmailIsUnique(existing.getEmail(), command.email());
+        existing.update(command.email(), command.username());
         User saved = userRepository.save(existing);
         log.info("User updated, id: {}", saved.getId());
         return userMapper.toDto(saved);
+    }
+
+    public void changePassword(String username, ChangePasswordCommand command) {
+        log.info("Change password for user: {}", username);
+        User user = findByUsername(username);
+        user.changePassword(command.getNewPassword());
+        userRepository.save(user);
+        log.info("Password changed, id: {}", user.getId());
     }
 
     private User findByUsername(String username) {
@@ -69,13 +80,25 @@ public class UserService {
 
     private void validateUsernameIsUnique(String username) {
         if (userRepository.existsByUsername(username)) {
-            throw new UserAlreadyExistsException("User with given username already exists!");
+            throw new UserAlreadyExistsException("User with given username: " + username + " already exists!");
         }
     }
 
     private void validateNewUsernameIsUnique(String currentUsername, String updatedUsername) {
         if (!Objects.equals(currentUsername, updatedUsername)) {
             validateUsernameIsUnique(updatedUsername);
+        }
+    }
+
+    private void validateEmailIsUnique(String email) {
+        if (userRepository.existsByEmail(email)) {
+            throw new UserAlreadyExistsException("User with given email: " + email + " already exists!");
+        }
+    }
+
+    private void validateNewEmailIsUnique(String currentEmail, String updatedEmail) {
+        if (!Objects.equals(currentEmail, updatedEmail)) {
+            validateEmailIsUnique(updatedEmail);
         }
     }
 }

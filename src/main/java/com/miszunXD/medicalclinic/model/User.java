@@ -19,12 +19,20 @@ public class User {
     private Long id;
 
     @Column(nullable = false, unique = true)
+    private String email;
+
+    @Column(nullable = false, unique = true)
     private String username;
 
     @Column(nullable = false)
     private String password;
 
-    public void update(String username) {
+    public void update(String email, String username) {
+        this.email = email;
         this.username = username;
+    }
+
+    public void changePassword(String newPassword) {
+        this.password = password;
     }
 }

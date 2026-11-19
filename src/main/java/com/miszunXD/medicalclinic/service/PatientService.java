@@ -2,9 +2,9 @@ package com.miszunXD.medicalclinic.service;
 
 import com.miszunXD.medicalclinic.dto.CreatePatientCommand;
 import com.miszunXD.medicalclinic.dto.PatientDto;
+import com.miszunXD.medicalclinic.dto.UpdatePatientCommand;
 import com.miszunXD.medicalclinic.exception.*;
 import com.miszunXD.medicalclinic.mapper.PatientMapper;
-import com.miszunXD.medicalclinic.model.ChangePasswordCommand;
 import com.miszunXD.medicalclinic.model.Patient;
 import com.miszunXD.medicalclinic.model.User;
 import com.miszunXD.medicalclinic.repository.PatientRepository;
@@ -40,7 +40,7 @@ public class PatientService {
 
     public PatientDto addPatient(CreatePatientCommand command) {
         log.info("Add new patient: {}", command);
-        validateEmailIsUnique(command.email());
+        validateIdCardNoIsUnique(command.idCardNo());
         validateUserNotAssignedToPatient(command.userId());
         User user = findUserById(command.userId());
         Patient patient = patientMapper.toEntity(command);
@@ -57,30 +57,15 @@ public class PatientService {
         log.info("Patient deleted from database, idCardNo: {}", patient.getIdCardNo());
     }
 
-    public PatientDto updatePatientByEmail(String email, PatientDto updated) {
-        log.info("Update patient by email: {}, body: {}", email, updated);
+    public PatientDto updatePatientByEmail(String email, UpdatePatientCommand command) {
+        log.info("Update patient by email: {}, body: {}", email, command);
         Patient existing = findPatientByEmail(email);
-        validateIdCardNumberNotChanged(existing.getIdCardNo(), updated.idCardNo());
-        validateNewEmailIsUnique(email, updated.email());
-        existing.update(updated.email(), updated.firstName(), updated.lastName(), updated.phoneNumber(),
-                updated.birthday());
+        validateIdCardNumberNotChanged(existing.getIdCardNo(), command.idCardNo());
+        existing.update(command.firstName(), command.lastName(), command.phoneNumber(),
+                command.birthday());
         Patient saved = patientRepository.save(existing);
         log.info("Patient updated, idCardNo: {}", saved.getIdCardNo());
         return patientMapper.toDto(saved);
-    }
-
-    public void changePassword(String email, ChangePasswordCommand command) {
-        log.info("Change password: {}", email);
-        Patient patient = findPatientByEmail(email);
-        patient.changePassword(command.getNewPassword());
-        patientRepository.save(patient);
-        log.info("Password changed, idCardNo: {}", patient.getIdCardNo());
-    }
-
-    private void validateNewEmailIsUnique(String currentEmail, String updatedEmail) {
-        if (!Objects.equals(currentEmail, updatedEmail)) {
-            validateEmailIsUnique(updatedEmail);
-        }
     }
 
     private void validateIdCardNumberNotChanged(String currentIdCardNo, String updatedIdCardNo) {
@@ -90,13 +75,13 @@ public class PatientService {
     }
 
     private Patient findPatientByEmail(String email) {
-        return patientRepository.findByEmail(email)
+        return patientRepository.findByUserEmail(email)
                 .orElseThrow(() -> new PatientNotFoundException("Patient with given email: " + email + " not found!"));
     }
 
-    private void validateEmailIsUnique(String email) {
-        if (patientRepository.existsByEmail(email)) {
-            throw new PatientAlreadyExistsException("Patient with given email: " + email
+    private void validateIdCardNoIsUnique(String idCardNo) {
+        if (patientRepository.existsByIdCardNo(idCardNo)) {
+            throw new PatientAlreadyExistsException("Patient with idCardNo: " + idCardNo
                     + " already exists!");
         }
     }

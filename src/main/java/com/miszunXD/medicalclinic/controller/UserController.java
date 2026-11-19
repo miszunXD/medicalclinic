@@ -3,6 +3,7 @@ package com.miszunXD.medicalclinic.controller;
 import com.miszunXD.medicalclinic.dto.CreateUserCommand;
 import com.miszunXD.medicalclinic.dto.UpdateUserCommand;
 import com.miszunXD.medicalclinic.dto.UserDto;
+import com.miszunXD.medicalclinic.model.ChangePasswordCommand;
 import com.miszunXD.medicalclinic.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -57,5 +58,13 @@ public class UserController {
         UserDto response = userService.updateUser(username, command);
         log.info("RESPONSE PUT /users/{} | 200", username);
         return response;
+    }
+
+    @PatchMapping("/{username}/password")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void changePassword(@PathVariable String username, @RequestBody ChangePasswordCommand command) {
+        log.info("REQUEST PATCH /users/{}/password", username);
+        userService.changePassword(username, command);
+        log.info("RESPONSE PATCH /users/{}/password | 204", username);
     }
 }

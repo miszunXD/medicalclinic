@@ -11,6 +11,7 @@ import java.util.List;
 public interface PatientMapper {
 
     @Mapping(source = "user.id", target = "userId")
+    @Mapping(source = "user.mail", target = "email")
     PatientDto toDto(Patient patient);
 
     List<PatientDto> toDtos(List<Patient> patients);
