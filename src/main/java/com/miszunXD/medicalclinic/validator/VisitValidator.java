@@ -19,9 +19,9 @@ public final class VisitValidator {
 
     }
 
-    private static void validateEndIsAfterStart(LocalDateTime startDate, LocalDateTime endDate) {
-        if (!endDate.isAfter(startDate)) {
-            throw new InvalidDateException("Visit end date: " + endDate + " has to be after start date " + startDate + " !");
+    public static void validateVisitIsNotAlreadyBooked(Visit visit) {
+        if (visit.isTaken()) {
+            throw new VisitAlreadyBookedException("Visit with given id: " + visit.getId() + " is already booked!");
         }
     }
 
@@ -37,9 +37,9 @@ public final class VisitValidator {
         }
     }
 
-    public static void validateVisitIsNotAlreadyBooked(Visit visit) {
-        if (visit.isTaken()) {
-            throw new VisitAlreadyBookedException("Visit with given id: " + visit.getId() + " is already booked!");
+    private static void validateEndIsAfterStart(LocalDateTime startDate, LocalDateTime endDate) {
+        if (!endDate.isAfter(startDate)) {
+            throw new InvalidDateException("Visit end date: " + endDate + " has to be after start date " + startDate + " !");
         }
     }
 }
