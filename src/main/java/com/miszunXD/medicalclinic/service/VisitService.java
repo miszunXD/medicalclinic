@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -26,16 +27,12 @@ public class VisitService {
     private final VisitRepository visitRepository;
     private final DoctorRepository doctorRepository;
     private final PatientRepository patientRepository;
-    private final VisitValidator visitValidator;
 
     public VisitDto createVisit(CreateVisitCommand command) {
         log.info("Create visit: {}", command);
-        visitValidator.validateEndIsAfterStart(command.startDate(), command.endDate());
-        visitValidator.validateVisitStartTimeIsNotInThePast(command.startDate());
-        visitValidator.validateTimeFullQuarter(command.startDate());
-        visitValidator.validateTimeFullQuarter(command.endDate());
+        VisitValidator.validateVisitTime(command.startDate(), command.endDate());
         Doctor doctor = findDoctorById(command.doctorId());
-        visitValidator.validateDoctorHasNoOverlappingVisit(command.doctorId(), command.startDate(), command.endDate());
+        validateDoctorHasNoOverlappingVisit(command.doctorId(), command.startDate(), command.endDate());
         Visit visit = visitMapper.toEntity(command);
         visit.setDoctor(doctor);
         Visit saved = visitRepository.save(visit);
@@ -47,8 +44,8 @@ public class VisitService {
         log.info("Register patient: {} visit: {}", patientId, visitId);
         Visit visit = findVisitById(visitId);
         Patient patient = findPatientById(patientId);
-        visitValidator.validateVisitStartTimeIsNotInThePast(visit.getStartDate());
-        visitValidator.validateVisitIsNotAlreadyBooked(visit);
+        VisitValidator.validateVisitStartTimeIsNotInThePast(visit.getStartDate());
+        VisitValidator.validateVisitIsNotAlreadyBooked(visit);
         visit.assignPatient(patient);
         Visit saved = visitRepository.save(visit);
         log.info("Patient: {} registered for visit: {}", patientId, saved.getId());
@@ -57,7 +54,7 @@ public class VisitService {
 
     public List<VisitDto> getPatientVisits(Long patientId) {
         log.info("Get all visits for patient: {}", patientId);
-        visitValidator.validatePatientExists(patientId);
+        validatePatientExists(patientId);
         List<VisitDto> result = visitMapper.toDtos(visitRepository.findAllByPatientId(patientId));
         log.info("Number of: {} visits registered by patient: {}", result.size(), patientId);
         return result;
@@ -76,5 +73,18 @@ public class VisitService {
     private Patient findPatientById(Long id) {
         return patientRepository.findById(id)
                 .orElseThrow(() -> new PatientNotFoundException("Patient with given id: " + id + " not found!"));
+    }
+
+    private void validateDoctorHasNoOverlappingVisit(Long doctorId, LocalDateTime startDate, LocalDateTime endDate) {
+        if (visitRepository.existsByDoctorIdAndStartDateLessThanAndEndDateGreaterThan(doctorId, endDate, startDate)) {
+            throw new VisitOverlapException("Doctor with given id: " + doctorId + " already has a booked visit between "
+                    + startDate + " and " + endDate + " !");
+        }
+    }
+
+    private void validatePatientExists(Long id) {
+        if (!patientRepository.existsById(id)) {
+            throw new PatientNotFoundException("Patient with given id: " + id + " not found!");
+        }
     }
 }
