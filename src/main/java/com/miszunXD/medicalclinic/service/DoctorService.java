@@ -82,7 +82,7 @@ public class DoctorService {
 
     private void validateDoctorNotAssignedToFacility(Doctor doctor, Long facilityId) {
         if (doctor.isAssignedToFacility(facilityId)) {
-            throw new DoctorAlreadyAssignedToFacility("Doctor with given id: " + doctor.getId()
+            throw new DoctorAlreadyAssignedToFacilityException("Doctor with given id: " + doctor.getId()
                     + " is already assigned to facility with id: " + facilityId);
         }
     }
