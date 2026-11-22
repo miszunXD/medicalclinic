@@ -6,7 +6,6 @@ import com.miszunXD.medicalclinic.model.Visit;
 
 import java.time.LocalDateTime;
 
-
 public final class VisitValidator {
 
     private VisitValidator() {
@@ -20,10 +19,9 @@ public final class VisitValidator {
 
     }
 
-    public static void validateEndIsAfterStart(LocalDateTime startDate, LocalDateTime endDate) {
+    private static void validateEndIsAfterStart(LocalDateTime startDate, LocalDateTime endDate) {
         if (!endDate.isAfter(startDate)) {
-            throw new InvalidDateException("Visit end date: " + endDate + " has to be after start date "
-                    + startDate + " !");
+            throw new InvalidDateException("Visit end date: " + endDate + " has to be after start date " + startDate + " !");
         }
     }
 
@@ -33,7 +31,7 @@ public final class VisitValidator {
         }
     }
 
-    public static void validateTimeFullQuarter(LocalDateTime dateTime) {
+    private static void validateTimeFullQuarter(LocalDateTime dateTime) {
         if (dateTime.getMinute() % 15 != 0 || dateTime.getSecond() != 0 || dateTime.getNano() != 0) {
             throw new InvalidDateException("Visit must be booked to full quarter of an hour: " + dateTime + " !");
         }
