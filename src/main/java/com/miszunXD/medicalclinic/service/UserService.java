@@ -6,7 +6,7 @@ import com.miszunXD.medicalclinic.dto.UserDto;
 import com.miszunXD.medicalclinic.exception.UserAlreadyExistsException;
 import com.miszunXD.medicalclinic.exception.UserNotFoundException;
 import com.miszunXD.medicalclinic.mapper.UserMapper;
-import com.miszunXD.medicalclinic.model.ChangePasswordCommand;
+import com.miszunXD.medicalclinic.dto.ChangePasswordCommand;
 import com.miszunXD.medicalclinic.model.User;
 import com.miszunXD.medicalclinic.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -67,7 +67,7 @@ public class UserService {
     public void changePassword(String username, ChangePasswordCommand command) {
         log.info("Change password for user: {}", username);
         User user = findByUsername(username);
-        user.changePassword(command.getNewPassword());
+        user.changePassword(command.newPassword());
         userRepository.save(user);
         log.info("Password changed, id: {}", user.getId());
     }
