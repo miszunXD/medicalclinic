@@ -20,21 +20,25 @@ public class Visit {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
+    @Column(nullable = false)
     private LocalDateTime startDate;
 
-    @Column
+    @Column(nullable = false)
     private LocalDateTime endDate;
 
     @ManyToOne
-    @JoinColumn(name = "doctors", nullable = false)
+    @JoinColumn(name = "doctor_id", nullable = false)
     private Doctor doctor;
 
     @ManyToOne
-    @JoinColumn(name = "patients", nullable = false)
+    @JoinColumn(name = "patient_id")
     private Patient patient;
 
     public void assignPatient(Patient patient) {
         this.patient = patient;
+    }
+
+    public boolean isTaken() {
+        return patient != null;
     }
 }

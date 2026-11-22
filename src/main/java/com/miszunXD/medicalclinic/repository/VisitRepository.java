@@ -4,9 +4,12 @@ import com.miszunXD.medicalclinic.model.Visit;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public interface VisitRepository extends JpaRepository<Visit, Long> {
 
     boolean existsByDoctorIdAndStartDateLessThanAndEndDateGreaterThan(Long doctorId, LocalDateTime endDate,
                                                                       LocalDateTime startDate);
+
+    List<Visit> findAllByPatientUserEmail(String email);
 }
