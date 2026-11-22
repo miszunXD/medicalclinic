@@ -12,7 +12,7 @@ import java.util.List;
 public interface VisitMapper {
 
     @Mapping(source = "doctor.id", target = "doctorId")
-    @Mapping(source = "patient.user.email", target = "patientEmail")
+    @Mapping(source = "patient.id", target = "patientId")
     VisitDto toDto(Visit visit);
 
     List<VisitDto> toDtos(List<Visit> visits);

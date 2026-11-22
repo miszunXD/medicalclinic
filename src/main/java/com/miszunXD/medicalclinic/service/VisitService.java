@@ -42,23 +42,23 @@ public class VisitService {
         return visitMapper.toDto(saved);
     }
 
-    public VisitDto registerPatient(Long visitId, String patientEmail) {
-        log.info("Register patient: {} visit: {}", patientEmail, visitId);
+    public VisitDto registerPatient(Long visitId, Long patientId) {
+        log.info("Register patient: {} visit: {}", patientId, visitId);
         Visit visit = findVisitById(visitId);
-        Patient patient = findPatientByEmail(patientEmail);
+        Patient patient = findPatientById(patientId);
         validateVisitStartTimeIsNotInThePast(visit.getStartDate());
         validateVisitIsNotAlreadyBooked(visit);
         visit.assignPatient(patient);
         Visit saved = visitRepository.save(visit);
-        log.info("Patient: {} registered for visit: {}", patientEmail, saved.getId());
+        log.info("Patient: {} registered for visit: {}", patientId, saved.getId());
         return visitMapper.toDto(saved);
     }
 
-    public List<VisitDto> getPatientVisits(String patientEmail) {
-        log.info("Get all visits for patient: {}", patientEmail);
-        validatePatientExists(patientEmail);
-        List<VisitDto> result = visitMapper.toDtos(visitRepository.findAllByPatientUserEmail(patientEmail));
-        log.info("Number of: {} visits registered by patient: {}", result.size(), patientEmail);
+    public List<VisitDto> getPatientVisits(Long patientId) {
+        log.info("Get all visits for patient: {}", patientId);
+        validatePatientExists(patientId);
+        List<VisitDto> result = visitMapper.toDtos(visitRepository.findAllByPatientId(patientId));
+        log.info("Number of: {} visits registered by patient: {}", result.size(), patientId);
         return result;
     }
 
@@ -72,9 +72,9 @@ public class VisitService {
                 .orElseThrow(() -> new VisitNotFoundException("Visit with given id: " + id + " not found!"));
     }
 
-    private Patient findPatientByEmail(String email) {
-        return patientRepository.findByUserEmail(email)
-                .orElseThrow(() -> new PatientNotFoundException("Patient with given email: " + email + " not found!"));
+    private Patient findPatientById(Long id) {
+        return patientRepository.findById(id)
+                .orElseThrow(() -> new PatientNotFoundException("Patient with given id: " + id + " not found!"));
     }
 
     private void validateEndIsAfterStart(LocalDateTime startDate, LocalDateTime endDate) {
@@ -109,9 +109,9 @@ public class VisitService {
         }
     }
 
-    private void validatePatientExists(String email) {
-        if (!patientRepository.existsByUserEmail(email)) {
-            throw new PatientNotFoundException("Patient with given email: " + email + " not found!");
+    private void validatePatientExists(Long id) {
+        if (!patientRepository.existsById(id)) {
+            throw new PatientNotFoundException("Patient with given id: " + id + " not found!");
         }
     }
 }

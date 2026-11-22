@@ -10,8 +10,4 @@ public interface PatientRepository extends JpaRepository<Patient, Long> {
     Optional<Patient> findByUserEmail(String email);
 
     boolean existsByIdCardNo(String idCardNo);
-
-    boolean existsByUserId(Long userId);
-
-    boolean existsByUserEmail(String email);
 }

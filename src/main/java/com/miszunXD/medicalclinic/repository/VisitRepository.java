@@ -11,5 +11,5 @@ public interface VisitRepository extends JpaRepository<Visit, Long> {
     boolean existsByDoctorIdAndStartDateLessThanAndEndDateGreaterThan(Long doctorId, LocalDateTime endDate,
                                                                       LocalDateTime startDate);
 
-    List<Visit> findAllByPatientUserEmail(String email);
+    List<Visit> findAllByPatientId(Long id);
 }

@@ -2,7 +2,6 @@ package com.miszunXD.medicalclinic.controller;
 
 import com.miszunXD.medicalclinic.dto.CreateVisitCommand;
 import com.miszunXD.medicalclinic.dto.VisitDto;
-import com.miszunXD.medicalclinic.model.Visit;
 import com.miszunXD.medicalclinic.service.VisitService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,11 +18,11 @@ public class VisitController {
 
     private final VisitService visitService;
 
-    @GetMapping("/{patientEmail}")
-    public List<VisitDto> getPatientVisits(@PathVariable String patientEmail) {
-        log.info("REQUEST GET /visits/{}", patientEmail);
-        List<VisitDto> response = visitService.getPatientVisits(patientEmail);
-        log.info("RESPONSE GET /visits/{} | 200 | count={}", patientEmail, response.size());
+    @GetMapping("/patients/{patientId}")
+    public List<VisitDto> getPatientVisits(@PathVariable Long patientId) {
+        log.info("REQUEST GET /visits/patients/{}", patientId);
+        List<VisitDto> response = visitService.getPatientVisits(patientId);
+        log.info("RESPONSE GET /visits/patients/{} | 200 | count={}", patientId, response.size());
         return response;
     }
 
@@ -36,11 +35,11 @@ public class VisitController {
         return response;
     }
 
-    @PostMapping("/{visitId}/patients/{patientEmail}")
-    public VisitDto registerPatient(@PathVariable Long visitId, @PathVariable String patientEmail) {
-        log.info("REQUEST POST /visits/{}/patients/{}", visitId, patientEmail);
-        VisitDto response = visitService.registerPatient(visitId, patientEmail);
-        log.info("RESPONSE POST /visits/{}/patients/{} | 200", visitId, patientEmail);
+    @PostMapping("/{visitId}/patients/{patientId}")
+    public VisitDto registerPatient(@PathVariable Long visitId, @PathVariable Long patientId) {
+        log.info("REQUEST POST /visits/{}/patients/{}", visitId, patientId);
+        VisitDto response = visitService.registerPatient(visitId, patientId);
+        log.info("RESPONSE POST /visits/{}/patients/{} | 200", visitId, patientId);
         return response;
     }
 }
