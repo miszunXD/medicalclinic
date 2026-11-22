@@ -10,6 +10,7 @@ import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface FacilityMapper {
+
     FacilityDto toDto(Facility facility);
 
     List<FacilityDto> toDtos(List<Facility> facilities);

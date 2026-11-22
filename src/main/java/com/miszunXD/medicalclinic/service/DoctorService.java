@@ -32,7 +32,7 @@ public class DoctorService {
         return result;
     }
 
-    public DoctorDto getDoctorById(Long id) {
+    public DoctorDto getDoctor(Long id) {
         log.info("GET doctor by id: {}", id);
         return doctorMapper.toDto(findDoctorById(id));
     }

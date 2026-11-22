@@ -15,6 +15,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/doctors")
 public class DoctorController {
+
     private final DoctorService doctorService;
 
     @GetMapping
@@ -26,9 +27,9 @@ public class DoctorController {
     }
 
     @GetMapping("/{id}")
-    public DoctorDto getDoctorById(@PathVariable Long id) {
+    public DoctorDto getDoctor(@PathVariable Long id) {
         log.info("REQUEST GET /doctor/{}", id);
-        DoctorDto response = doctorService.getDoctorById(id);
+        DoctorDto response = doctorService.getDoctor(id);
         log.info("RESPONSE GET /doctor/{} | 200", id);
         return response;
     }

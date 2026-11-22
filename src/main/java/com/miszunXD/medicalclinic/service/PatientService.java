@@ -41,12 +41,13 @@ public class PatientService {
     public PatientDto addPatient(CreatePatientCommand command) {
         log.info("Add new patient: {}", command);
         validateIdCardNoIsUnique(command.idCardNo());
-        validateUserNotAssignedToPatient(command.userId());
-        User user = findUserById(command.userId());
+        validateUsernameIsUnique(command.username());
+        validateEmailIsUnique(command.email());
+        User user = createUserFromPatientCommand(command);
         Patient patient = patientMapper.toEntity(command);
         patient.setUser(user);
         Patient saved = patientRepository.save(patient);
-        log.info("Added new patient, idCardNo: {}", saved.getIdCardNo());
+        log.info("Added new patient, idCardNo: {}, userId: {}", saved.getIdCardNo(), saved.getUser().getId());
         return patientMapper.toDto(saved);
     }
 
@@ -68,6 +69,14 @@ public class PatientService {
         return patientMapper.toDto(saved);
     }
 
+    private User createUserFromPatientCommand(CreatePatientCommand command) {
+        User user = new User();
+        user.setEmail(command.email());
+        user.setUsername(command.username());
+        user.setPassword(command.password());
+        return user;
+    }
+
     private void validateIdCardNumberNotChanged(String currentIdCardNo, String updatedIdCardNo) {
         if (!Objects.equals(currentIdCardNo, updatedIdCardNo)) {
             throw new IdCardNumberChangeNotAllowedException("Not allowed to change IDCard number!");
@@ -86,15 +95,15 @@ public class PatientService {
         }
     }
 
-    private void validateUserNotAssignedToPatient(Long id) {
-        if (patientRepository.existsByUserId(id)) {
-            throw new UserAlreadyAssignedException("User with id: " + id
-                    + " is already assigned to another patient!");
+    private void validateUsernameIsUnique(String username) {
+        if (userRepository.existsByUsername(username)) {
+            throw new UserAlreadyExistsException("User with given username: " + username + " already exists!");
         }
     }
 
-    private User findUserById(Long id) {
-        return userRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException("User with given id: " + id + " not found!"));
+    private void validateEmailIsUnique(String email) {
+        if (userRepository.existsByEmail(email)) {
+            throw new UserAlreadyExistsException("User with given email: " + email + " already exists!");
+        }
     }
 }

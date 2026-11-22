@@ -33,7 +33,7 @@ public class Patient {
 
     private LocalDate birthday;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "user_id", nullable = false, unique = true)
     private User user;
 

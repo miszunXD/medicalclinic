@@ -21,7 +21,7 @@ public class FacilityService {
     private final FacilityRepository facilityRepository;
 
     public List<FacilityDto> getFacilities() {
-        log.info("Getting List/facilities");
+        log.info("Start process opf getting facilities");
         List<FacilityDto> result = facilityMapper.toDtos(facilityRepository.findAll());
         log.info("List of {} facilities", result.size());
         return result;

@@ -15,6 +15,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/facilities")
 public class FacilityController {
+
     private final FacilityService facilityService;
 
     @GetMapping
