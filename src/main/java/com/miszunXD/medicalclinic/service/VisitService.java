@@ -14,6 +14,7 @@ import com.miszunXD.medicalclinic.validator.VisitValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -28,6 +29,7 @@ public class VisitService {
     private final DoctorRepository doctorRepository;
     private final PatientRepository patientRepository;
 
+    @Transactional
     public VisitDto createVisit(CreateVisitCommand command) {
         log.info("Create visit: {}", command);
         VisitValidator.validateVisitTime(command.startDate(), command.endDate());
@@ -40,6 +42,7 @@ public class VisitService {
         return visitMapper.toDto(saved);
     }
 
+    @Transactional
     public VisitDto registerPatient(Long visitId, Long patientId) {
         log.info("Register patient: {} visit: {}", patientId, visitId);
         Visit visit = findVisitById(visitId);
@@ -52,6 +55,7 @@ public class VisitService {
         return visitMapper.toDto(saved);
     }
 
+    @Transactional(readOnly = true)
     public List<VisitDto> getPatientVisits(Long patientId) {
         log.info("Get all visits for patient: {}", patientId);
         validatePatientExists(patientId);

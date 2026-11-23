@@ -13,6 +13,7 @@ import com.miszunXD.medicalclinic.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -25,6 +26,7 @@ public class DoctorService {
     private final UserRepository userRepository;
     private final FacilityRepository facilityRepository;
 
+    @Transactional(readOnly = true)
     public List<DoctorDto> getDoctors() {
         log.info("Getting List/doctors");
         List<DoctorDto> result = doctorMapper.toDtos(doctorRepository.findAll());
@@ -32,11 +34,13 @@ public class DoctorService {
         return result;
     }
 
+    @Transactional(readOnly = true)
     public DoctorDto getDoctor(Long id) {
         log.info("GET doctor by id: {}", id);
         return doctorMapper.toDto(findDoctorById(id));
     }
 
+    @Transactional
     public DoctorDto addDoctor(CreateDoctorCommand command) {
         log.info("Add new doctor {}", command);
         validateUserNotAssignedToDoctor(command.userId());
@@ -48,6 +52,7 @@ public class DoctorService {
         return doctorMapper.toDto(saved);
     }
 
+    @Transactional
     public DoctorDto assignFacility(Long doctorId, Long facilityId) {
         log.info("Assign facility: {} to doctor: {}", facilityId, doctorId);
         Doctor doctor = findDoctorById(doctorId);
