@@ -51,4 +51,16 @@ public class Doctor {
         return facilities.stream()
                 .anyMatch(facility -> Objects.equals(facility.getId(), facilityId));
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Doctor other)) return false;
+        return id != null && id.equals(other.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 }
