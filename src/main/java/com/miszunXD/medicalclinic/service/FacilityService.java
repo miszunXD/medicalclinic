@@ -10,6 +10,7 @@ import com.miszunXD.medicalclinic.repository.FacilityRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -20,6 +21,7 @@ public class FacilityService {
     private final FacilityMapper facilityMapper;
     private final FacilityRepository facilityRepository;
 
+    @Transactional(readOnly = true)
     public List<FacilityDto> getFacilities() {
         log.info("Start process opf getting facilities");
         List<FacilityDto> result = facilityMapper.toDtos(facilityRepository.findAll());
@@ -27,6 +29,7 @@ public class FacilityService {
         return result;
     }
 
+    @Transactional
     public FacilityDto addFacility(CreateFacilityCommand command) {
         log.info("Add new facility {}", command);
         validateFacilityNameIsUnique(command.name());

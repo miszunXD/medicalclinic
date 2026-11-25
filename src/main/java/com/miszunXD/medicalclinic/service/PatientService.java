@@ -12,6 +12,7 @@ import com.miszunXD.medicalclinic.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
@@ -24,6 +25,7 @@ public class PatientService {
     private final PatientMapper patientMapper;
     private final UserRepository userRepository;
 
+    @Transactional(readOnly = true)
     public List<PatientDto> getPatients() {
         log.info("Getting List/patients");
         List<PatientDto> result = patientMapper.toDtos(patientRepository.findAll());
@@ -31,6 +33,7 @@ public class PatientService {
         return result;
     }
 
+    @Transactional(readOnly = true)
     public PatientDto getPatientByEmail(String email) {
         log.info("GET patient by email {}", email);
         PatientDto result = patientMapper.toDto(findPatientByEmail(email));
@@ -38,6 +41,7 @@ public class PatientService {
         return result;
     }
 
+    @Transactional
     public PatientDto addPatient(CreatePatientCommand command) {
         log.info("Add new patient: {}", command);
         validateIdCardNoIsUnique(command.idCardNo());
@@ -51,6 +55,7 @@ public class PatientService {
         return patientMapper.toDto(saved);
     }
 
+    @Transactional
     public void deletePatient(String email) {
         log.info("Delete patient by email: {}", email);
         Patient patient = findPatientByEmail(email);
@@ -58,6 +63,7 @@ public class PatientService {
         log.info("Patient deleted from database, idCardNo: {}", patient.getIdCardNo());
     }
 
+    @Transactional
     public PatientDto updatePatientByEmail(String email, UpdatePatientCommand command) {
         log.info("Update patient by email: {}, body: {}", email, command);
         Patient existing = findPatientByEmail(email);

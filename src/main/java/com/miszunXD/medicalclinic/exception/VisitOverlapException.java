@@ -2,8 +2,8 @@ package com.miszunXD.medicalclinic.exception;
 
 import org.springframework.http.HttpStatus;
 
-public class DoctorAlreadyAssignedToFacility extends MedicalClinicException {
-    public DoctorAlreadyAssignedToFacility(String message) {
+public class VisitOverlapException extends MedicalClinicException {
+    public VisitOverlapException(String message) {
         super(message, HttpStatus.CONFLICT);
     }
 }
