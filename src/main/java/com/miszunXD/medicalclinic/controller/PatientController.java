@@ -1,6 +1,7 @@
 package com.miszunXD.medicalclinic.controller;
 
 import com.miszunXD.medicalclinic.dto.CreatePatientCommand;
+import com.miszunXD.medicalclinic.dto.PageDto;
 import com.miszunXD.medicalclinic.dto.PatientDto;
 import com.miszunXD.medicalclinic.dto.UpdatePatientCommand;
 import com.miszunXD.medicalclinic.service.PatientService;
@@ -20,10 +21,10 @@ public class PatientController {
     private final PatientService patientService;
 
     @GetMapping
-    public Page<PatientDto> getPatients(Pageable pageable) {
+    public PageDto<PatientDto> getPatients(Pageable pageable) {
         log.info("REQUEST GET /patients");
-        Page<PatientDto> response = patientService.getPatients(pageable);
-        log.info("RESPONSE GET /patients | 200 | page count={}", response.getTotalPages());
+        PageDto<PatientDto> response = patientService.getPatients(pageable);
+        log.info("RESPONSE GET /patients | 200 | page count={}", response.content().size());
         return response;
     }
 

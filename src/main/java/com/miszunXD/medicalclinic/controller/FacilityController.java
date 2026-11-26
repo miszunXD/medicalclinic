@@ -2,6 +2,7 @@ package com.miszunXD.medicalclinic.controller;
 
 import com.miszunXD.medicalclinic.dto.CreateFacilityCommand;
 import com.miszunXD.medicalclinic.dto.FacilityDto;
+import com.miszunXD.medicalclinic.dto.PageDto;
 import com.miszunXD.medicalclinic.service.FacilityService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,10 +20,10 @@ public class FacilityController {
     private final FacilityService facilityService;
 
     @GetMapping
-    public Page<FacilityDto> getFacilities(Pageable pageable) {
+    public PageDto<FacilityDto> getFacilities(Pageable pageable) {
         log.info("REQUEST GET /facilities");
-        Page<FacilityDto> response = facilityService.getFacilities(pageable);
-        log.info("RESPONSE GET /facilities | 200 | pages count={}", response.getTotalPages());
+        PageDto<FacilityDto> response = facilityService.getFacilities(pageable);
+        log.info("RESPONSE GET /facilities | 200 |  count={}", response.content().size());
         return response;
     }
 

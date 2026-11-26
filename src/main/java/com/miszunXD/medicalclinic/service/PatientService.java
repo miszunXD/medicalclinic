@@ -1,6 +1,7 @@
 package com.miszunXD.medicalclinic.service;
 
 import com.miszunXD.medicalclinic.dto.CreatePatientCommand;
+import com.miszunXD.medicalclinic.dto.PageDto;
 import com.miszunXD.medicalclinic.dto.PatientDto;
 import com.miszunXD.medicalclinic.dto.UpdatePatientCommand;
 import com.miszunXD.medicalclinic.exception.*;
@@ -27,12 +28,13 @@ public class PatientService {
     private final UserRepository userRepository;
 
     @Transactional(readOnly = true)
-    public Page<PatientDto> getPatients(Pageable pageable) {
+    public PageDto<PatientDto> getPatients(Pageable pageable) {
         log.info("Getting Page/patients");
         Page<PatientDto> result = patientRepository.findAll(pageable)
                         .map(patientMapper::toDto);
-        log.info("List of {} patients", result.getTotalPages());
-        return result;
+        log.info("Found {} patients on page {} of {}", result.getNumberOfElements(), result.getNumber(),
+                result.getTotalPages());
+        return PageDto.from(result);
     }
 
     @Transactional(readOnly = true)

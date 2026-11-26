@@ -2,6 +2,7 @@ package com.miszunXD.medicalclinic.service;
 
 import com.miszunXD.medicalclinic.dto.CreateFacilityCommand;
 import com.miszunXD.medicalclinic.dto.FacilityDto;
+import com.miszunXD.medicalclinic.dto.PageDto;
 import com.miszunXD.medicalclinic.exception.FacilityAlreadyExistsException;
 import com.miszunXD.medicalclinic.exception.FacilityNotFoundException;
 import com.miszunXD.medicalclinic.mapper.FacilityMapper;
@@ -14,8 +15,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -24,12 +23,13 @@ public class FacilityService {
     private final FacilityRepository facilityRepository;
 
     @Transactional(readOnly = true)
-    public Page<FacilityDto> getFacilities(Pageable pageable) {
+    public PageDto<FacilityDto> getFacilities(Pageable pageable) {
         log.info("Start process of getting facilities");
         Page<FacilityDto> result = facilityRepository.findAll(pageable)
                         .map(facilityMapper::toDto);
-        log.info("Number of pages {} facilities", result.getTotalPages());
-        return result;
+        log.info("Found {} facilities on page {} of {}", result.getNumberOfElements(), result.getNumber(),
+                result.getTotalPages());
+        return PageDto.from(result);
     }
 
     @Transactional

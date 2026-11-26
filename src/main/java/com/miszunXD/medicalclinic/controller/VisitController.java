@@ -1,14 +1,14 @@
 package com.miszunXD.medicalclinic.controller;
 
 import com.miszunXD.medicalclinic.dto.CreateVisitCommand;
+import com.miszunXD.medicalclinic.dto.PageDto;
 import com.miszunXD.medicalclinic.dto.VisitDto;
 import com.miszunXD.medicalclinic.service.VisitService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @Slf4j
@@ -19,10 +19,10 @@ public class VisitController {
     private final VisitService visitService;
 
     @GetMapping("/patients/{patientId}")
-    public List<VisitDto> getPatientVisits(@PathVariable Long patientId) {
+    public PageDto<VisitDto> getPatientVisits(@PathVariable Long patientId, Pageable pageable) {
         log.info("REQUEST GET /visits/patients/{}", patientId);
-        List<VisitDto> response = visitService.getPatientVisits(patientId);
-        log.info("RESPONSE GET /visits/patients/{} | 200 | count={}", patientId, response.size());
+        PageDto<VisitDto> response = visitService.getPatientVisits(patientId, pageable);
+        log.info("RESPONSE GET /visits/patients/{} | 200 | count={}", patientId, response.content().size());
         return response;
     }
 

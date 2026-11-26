@@ -1,12 +1,9 @@
 package com.miszunXD.medicalclinic.service;
 
-import com.miszunXD.medicalclinic.dto.CreateUserCommand;
-import com.miszunXD.medicalclinic.dto.UpdateUserCommand;
-import com.miszunXD.medicalclinic.dto.UserDto;
+import com.miszunXD.medicalclinic.dto.*;
 import com.miszunXD.medicalclinic.exception.UserAlreadyExistsException;
 import com.miszunXD.medicalclinic.exception.UserNotFoundException;
 import com.miszunXD.medicalclinic.mapper.UserMapper;
-import com.miszunXD.medicalclinic.dto.ChangePasswordCommand;
 import com.miszunXD.medicalclinic.model.User;
 import com.miszunXD.medicalclinic.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -26,12 +23,13 @@ public class UserService {
     private final UserMapper userMapper;
 
     @Transactional(readOnly = true)
-    public Page<UserDto> getUsers(Pageable pageable) {
+    public PageDto<UserDto> getUsers(Pageable pageable) {
         log.info("Getting List/users");
         Page<UserDto> result = userRepository.findAll(pageable)
                         .map(userMapper::toDto);
-        log.info("Number of pages {} users", result.getTotalPages());
-        return result;
+        log.info("Found {} users on page {} of {}", result.getNumberOfElements(), result.getNumber(),
+                result.getTotalPages());
+        return PageDto.from(result);
     }
 
     @Transactional

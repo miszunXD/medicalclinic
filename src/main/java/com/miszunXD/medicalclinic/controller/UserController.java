@@ -1,18 +1,12 @@
 package com.miszunXD.medicalclinic.controller;
 
-import com.miszunXD.medicalclinic.dto.CreateUserCommand;
-import com.miszunXD.medicalclinic.dto.UpdateUserCommand;
-import com.miszunXD.medicalclinic.dto.UserDto;
-import com.miszunXD.medicalclinic.dto.ChangePasswordCommand;
+import com.miszunXD.medicalclinic.dto.*;
 import com.miszunXD.medicalclinic.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Slf4j
 @RestController
@@ -23,10 +17,10 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping
-    public Page<UserDto> getUsers(Pageable pageable) {
+    public PageDto<UserDto> getUsers(Pageable pageable) {
         log.info("REQUEST GET /users");
-        Page<UserDto> response = userService.getUsers(pageable);
-        log.info("RESPONSE GET /users | 200 | pages count={}", response.getTotalPages());
+        PageDto<UserDto> response = userService.getUsers(pageable);
+        log.info("RESPONSE GET /users | 200 | count={}", response.content().size());
         return response;
     }
 

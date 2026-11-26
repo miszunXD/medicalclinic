@@ -1,6 +1,7 @@
 package com.miszunXD.medicalclinic.service;
 
 import com.miszunXD.medicalclinic.dto.CreateVisitCommand;
+import com.miszunXD.medicalclinic.dto.PageDto;
 import com.miszunXD.medicalclinic.dto.VisitDto;
 import com.miszunXD.medicalclinic.exception.*;
 import com.miszunXD.medicalclinic.mapper.VisitMapper;
@@ -13,6 +14,8 @@ import com.miszunXD.medicalclinic.repository.VisitRepository;
 import com.miszunXD.medicalclinic.validator.VisitValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -56,12 +59,14 @@ public class VisitService {
     }
 
     @Transactional(readOnly = true)
-    public List<VisitDto> getPatientVisits(Long patientId) {
+    public PageDto<VisitDto> getPatientVisits(Long patientId, Pageable pageable) {
         log.info("Get all visits for patient: {}", patientId);
         validatePatientExists(patientId);
-        List<VisitDto> result = visitMapper.toDtos(visitRepository.findAllByPatientId(patientId));
-        log.info("Number of: {} visits registered by patient: {}", result.size(), patientId);
-        return result;
+        Page<VisitDto> result = visitRepository.findAllByPatientId(patientId, pageable)
+                        .map(visitMapper::toDto);
+        log.info("Found {} visits for patient: {} on page {} of {}", result.getNumberOfElements(), patientId,
+                result.getNumber(), result.getTotalPages());
+        return PageDto.from(result);
     }
 
     private Doctor findDoctorById(Long id) {
