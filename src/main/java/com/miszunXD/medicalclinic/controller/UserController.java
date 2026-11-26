@@ -7,6 +7,8 @@ import com.miszunXD.medicalclinic.dto.ChangePasswordCommand;
 import com.miszunXD.medicalclinic.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,10 +23,10 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping
-    public List<UserDto> getUsers() {
+    public Page<UserDto> getUsers(Pageable pageable) {
         log.info("REQUEST GET /users");
-        List<UserDto> response = userService.getUsers();
-        log.info("RESPONSE GET /users | 200 | count={}", response.size());
+        Page<UserDto> response = userService.getUsers(pageable);
+        log.info("RESPONSE GET /users | 200 | pages count={}", response.getTotalPages());
         return response;
     }
 

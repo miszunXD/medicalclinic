@@ -6,10 +6,10 @@ import com.miszunXD.medicalclinic.dto.UpdatePatientCommand;
 import com.miszunXD.medicalclinic.service.PatientService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Slf4j
 @RestController
@@ -20,10 +20,10 @@ public class PatientController {
     private final PatientService patientService;
 
     @GetMapping
-    public List<PatientDto> getPatients() {
+    public Page<PatientDto> getPatients(Pageable pageable) {
         log.info("REQUEST GET /patients");
-        List<PatientDto> response = patientService.getPatients();
-        log.info("RESPONSE GET /patients | 200 | count={}", response.size());
+        Page<PatientDto> response = patientService.getPatients(pageable);
+        log.info("RESPONSE GET /patients | 200 | page count={}", response.getTotalPages());
         return response;
     }
 

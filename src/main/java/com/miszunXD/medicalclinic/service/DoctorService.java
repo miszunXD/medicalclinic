@@ -12,10 +12,10 @@ import com.miszunXD.medicalclinic.repository.FacilityRepository;
 import com.miszunXD.medicalclinic.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Slf4j
 @Service
@@ -27,10 +27,11 @@ public class DoctorService {
     private final FacilityRepository facilityRepository;
 
     @Transactional(readOnly = true)
-    public List<DoctorDto> getDoctors() {
-        log.info("Getting List/doctors");
-        List<DoctorDto> result = doctorMapper.toDtos(doctorRepository.findAll());
-        log.info("List of {} doctors", result.size());
+    public Page<DoctorDto> getDoctors(Pageable pageable) {
+        log.info("Getting Page/doctors");
+        Page<DoctorDto> result = doctorRepository.findAll(pageable)
+                        .map(doctorMapper::toDto);
+        log.info("Number of  pages {} doctors", result.getTotalPages());
         return result;
     }
 

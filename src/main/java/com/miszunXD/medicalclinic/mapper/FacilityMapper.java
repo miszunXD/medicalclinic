@@ -13,8 +13,6 @@ public interface FacilityMapper {
 
     FacilityDto toDto(Facility facility);
 
-    List<FacilityDto> toDtos(List<Facility> facilities);
-
     @Mapping(target = "id", ignore = true)
     Facility toEntity(CreateFacilityCommand command);
 }

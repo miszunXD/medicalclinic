@@ -15,8 +15,6 @@ public interface DoctorMapper {
     @Mapping(source = "user.email", target = "email")
     DoctorDto toDto(Doctor doctor);
 
-    List<DoctorDto> toDtos(List<Doctor> doctors);
-
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "user", ignore = true)
     @Mapping(target = "facilities", ignore = true)

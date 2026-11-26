@@ -14,8 +14,6 @@ public interface PatientMapper {
     @Mapping(source = "user.email", target = "email")
     PatientDto toDto(Patient patient);
 
-    List<PatientDto> toDtos(List<Patient> patients);
-
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "user", ignore = true)
     Patient toEntity(CreatePatientCommand command);

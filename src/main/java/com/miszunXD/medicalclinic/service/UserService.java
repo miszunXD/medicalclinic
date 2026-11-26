@@ -11,10 +11,11 @@ import com.miszunXD.medicalclinic.model.User;
 import com.miszunXD.medicalclinic.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Objects;
 
 @Slf4j
@@ -25,10 +26,11 @@ public class UserService {
     private final UserMapper userMapper;
 
     @Transactional(readOnly = true)
-    public List<UserDto> getUsers() {
+    public Page<UserDto> getUsers(Pageable pageable) {
         log.info("Getting List/users");
-        List<UserDto> result = userMapper.toDtos(userRepository.findAll());
-        log.info("List of {} users", result.size());
+        Page<UserDto> result = userRepository.findAll(pageable)
+                        .map(userMapper::toDto);
+        log.info("Number of pages {} users", result.getTotalPages());
         return result;
     }
 

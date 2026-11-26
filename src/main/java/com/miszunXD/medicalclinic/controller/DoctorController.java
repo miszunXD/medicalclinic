@@ -5,10 +5,10 @@ import com.miszunXD.medicalclinic.dto.DoctorDto;
 import com.miszunXD.medicalclinic.service.DoctorService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -19,10 +19,10 @@ public class DoctorController {
     private final DoctorService doctorService;
 
     @GetMapping
-    public List<DoctorDto> getDoctors() {
+    public Page<DoctorDto> getDoctors(Pageable pageable) {
         log.info("REQUEST GET /doctors");
-        List<DoctorDto> response = doctorService.getDoctors();
-        log.info("RESPONSE GET /doctors | 200 | count={}", response.size());
+        Page<DoctorDto> response = doctorService.getDoctors(pageable);
+        log.info("RESPONSE GET /doctors | 200 | pages count={}", response.getTotalPages());
         return response;
     }
 

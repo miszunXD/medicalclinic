@@ -11,10 +11,11 @@ import com.miszunXD.medicalclinic.repository.PatientRepository;
 import com.miszunXD.medicalclinic.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Objects;
 
 @Slf4j
@@ -26,10 +27,11 @@ public class PatientService {
     private final UserRepository userRepository;
 
     @Transactional(readOnly = true)
-    public List<PatientDto> getPatients() {
-        log.info("Getting List/patients");
-        List<PatientDto> result = patientMapper.toDtos(patientRepository.findAll());
-        log.info("List of {} patients", result.size());
+    public Page<PatientDto> getPatients(Pageable pageable) {
+        log.info("Getting Page/patients");
+        Page<PatientDto> result = patientRepository.findAll(pageable)
+                        .map(patientMapper::toDto);
+        log.info("List of {} patients", result.getTotalPages());
         return result;
     }
 

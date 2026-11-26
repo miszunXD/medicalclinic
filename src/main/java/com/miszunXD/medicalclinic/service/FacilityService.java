@@ -9,6 +9,8 @@ import com.miszunXD.medicalclinic.model.Facility;
 import com.miszunXD.medicalclinic.repository.FacilityRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,10 +24,11 @@ public class FacilityService {
     private final FacilityRepository facilityRepository;
 
     @Transactional(readOnly = true)
-    public List<FacilityDto> getFacilities() {
-        log.info("Start process opf getting facilities");
-        List<FacilityDto> result = facilityMapper.toDtos(facilityRepository.findAll());
-        log.info("List of {} facilities", result.size());
+    public Page<FacilityDto> getFacilities(Pageable pageable) {
+        log.info("Start process of getting facilities");
+        Page<FacilityDto> result = facilityRepository.findAll(pageable)
+                        .map(facilityMapper::toDto);
+        log.info("Number of pages {} facilities", result.getTotalPages());
         return result;
     }
 
